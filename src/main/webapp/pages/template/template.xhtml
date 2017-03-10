@@ -8,11 +8,24 @@
 <h:head></h:head>
 <h:body>
 	<p:menubar>
-        <p:menuitem value="Cidade" url="form_cidade.xhtml" />
-        <p:menuitem value="Estado" url="form_estado.xhtml" />
-        <p:menuitem value="Pedido" url="form_pedido.xhtml" />
-        <p:menuitem value="Produto" url="form_produto2.xhtml" />
-        <p:menuitem value="Usuário" url="form_usuario3.xhtml" />
+		<p:submenu label="Cidade">
+        	<p:menuitem value="Cidade" url="form_cidade.xhtml" />
+        </p:submenu>
+        <p:submenu label="Estado">
+        	<p:menuitem value="Estado" url="form_estado.xhtml" />
+        </p:submenu>
+        <p:submenu label="Pedido">
+        	<p:menuitem value="Pedido" url="form_pedido.xhtml" />
+        </p:submenu>
+        <p:submenu label="Produto">
+        	<p:menuitem value="Produto 1" url="form_produto.xhtml" />
+        	<p:menuitem value="Produto 2" url="form_produto2.xhtml" />
+        </p:submenu>
+        <p:submenu label="Usuário">
+	        <p:menuitem value="Usuário 1" url="form_usuario.xhtml" />
+	        <p:menuitem value="Usuário 2" url="form_usuario2.xhtml" />
+        	<p:menuitem value="Usuário 3" url="form_usuario3.xhtml" />
+        </p:submenu>
     </p:menubar>
     <ui:insert name="corpo"></ui:insert>
 </h:body>

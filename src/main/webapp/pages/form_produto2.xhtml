@@ -8,13 +8,7 @@
 	<ui:define name="corpo">
 	<h:form id="formProdutos">
 		<p:growl id="msg" showDetail="true" sticky="true" life="50" />
-		<p:menubar>
-	        <p:menuitem value="Cidade" url="form_cidade.xhtml" />
-	        <p:menuitem value="Estado" url="form_estado.xhtml" />
-	        <p:menuitem value="Pedido" url="form_pedido.xhtml" />
-	        <p:menuitem value="Produto" url="form_produto2.xhtml" />
-	        <p:menuitem value="Usuário" url="form_usuario3.xhtml" />
-	    </p:menubar>
+		
 		<p:panel header="Produtos">
 			<p:dataTable value="#{produtoBean.produtos}" var="prods"
 				emptyMessage="Nenhum Registro Encontrado" selection="#{produtoBean.produtosSelecionados}" rowKey="#{prods.id}">

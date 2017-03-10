@@ -10,7 +10,7 @@
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
 
 	<context:property-placeholder location="classpath:META-INF/database.properties" />
-	<context:component-scan base-package="com.noriakijr.spring_jsf_hib" />
+	<context:component-scan base-package="com.feoyama.spring_jsf_hib" />
 
 	<!-- Configurando Data Source com os dados do banco -->
 	<bean id="mysqlDataSource" class="org.apache.commons.dbcp.BasicDataSource">
@@ -25,7 +25,7 @@
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="mysqlDataSource" />
 		
-		<property name="packagesToScan" value="com.noriakijr.spring_jsf_hib.model" />
+		<property name="packagesToScan" value="com.feoyama.spring_jsf_hib.model" />
 		
 		<!-- Adapter JPA (Hibernate) -->
 		<property name="jpaVendorAdapter">
@@ -55,7 +55,7 @@
 		<property name="scopes">
 			<map>
 				<entry key="view">
-					<bean class="com.noriakijr.spring_jsf_hib.util.ViewScope" />
+					<bean class="com.feoyama.spring_jsf_hib.util.ViewScope" />
 				</entry>
 			</map>
 		</property>
