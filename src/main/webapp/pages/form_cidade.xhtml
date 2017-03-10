@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate template="template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+	<h:form id="formCidades">
+		<p:growl id="msg" showDetail="true" sticky="true" life="50" />
+		
+		<p:panel header="Produtos">
+			<p:dataTable value="#{cidadeBean.cidades}" var="cid" emptyMessage="Nenhum Registro Encontrado"
+				selection="#{cidadeBean.cidadesSelecionadas}" rowKey="#{cid.id}">
+				<p:ajax event="rowSelect" listener="#{cidadeBean.onRowSelect}"
+					update="formDialog" onsuccess="PF('insereCidade').show();" />
+					
+				<p:column selectionMode="multiple" style="width:16px;text-align:center" />
+				<p:column headerText="Id"> 
+					<h:outputText value="#{cid.id}" />
+				</p:column>
+				<p:column headerText="Descrição">
+					<h:outputText value="#{cid.descricao}" />
+				</p:column>
+				<p:column headerText="Estado">
+					<h:outputText value="#{cid.estado.descricao} - #{cid.estado.sigla}" />
+				</p:column>
+				
+			</p:dataTable>
+			<p:commandButton value="Inserir Cidade" type="button" onclick="PF('insereCidade').show();" />
+			<p:commandButton value="Excluir Cidade" action="#{cidadeBean.excluir}" update="@form"/>
+			
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Cadastro de Cidade" widgetVar="insereCidade" modal="true" minHeight="40">
+		<h:form id="formDialog">
+	    	<p:panelGrid columns="2">
+	    		<p:outputLabel value="Descrição"></p:outputLabel>
+	    		<p:inputText value="#{cidadeBean.cidade.descricao}"></p:inputText>
+	    		
+	    		<p:outputLabel value="Estado"></p:outputLabel>
+	    		<p:selectOneMenu id="estado" value="#{cidadeBean.cidade.estado}" style="width:83%" converter="#{estadoConverter}">
+					<f:selectItems value="#{cidadeBean.estados}" var="est" itemLabel="#{est.descricao} - #{est.sigla}" itemValue="#{est}"/>
+				</p:selectOneMenu>
+	    		
+				<p:commandButton action="#{cidadeBean.salvar}" value="Cadastrar" update="formCidades formDialog" onsuccess="PF('insereCidade').hide()"></p:commandButton>
+	    	</p:panelGrid>
+    	</h:form>
+	</p:dialog>  
+	</ui:define>
+</ui:decorate>

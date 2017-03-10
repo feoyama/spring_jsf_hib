@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate template="template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+
+	<h:form>
+		<p:growl id="msg" showDetail="true" sticky="true" life="50" />
+
+		<p:panel header="Cadastro de Produto">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Descrição"></p:outputLabel>
+				<p:inputText value="#{produtoBean.produto.descricao}"></p:inputText>
+				<p:outputLabel value="Tipo"></p:outputLabel>
+				<p:selectOneMenu id="tipo" value="#{produtoBean.produto.tipo}" style="width:83%">
+					<f:selectItems value="#{produtoBean.getListTipo()}" var="tip" itemLabel="#{tip.descricao}" />
+				</p:selectOneMenu>
+				<p:outputLabel value="Valor"></p:outputLabel>
+				<p:inputText value="#{produtoBean.produto.valor}">
+					<p:keyFilter regEx="/[\d\-\.]/" />
+				</p:inputText>
+				<p:outputLabel value="Peso"></p:outputLabel>
+				<p:inputText value="#{produtoBean.produto.peso}">
+					<p:keyFilter regEx="/[\d\-\.]/" />
+				</p:inputText>
+				<p:outputLabel value="Data de Validade"></p:outputLabel>
+				<p:calendar value="#{produtoBean.produto.dataValidade}"
+					locale="pt_BR"></p:calendar>
+			</h:panelGrid>
+
+			<p:commandButton value="Salvar" action="#{produtoBean.salvar}"
+				update="@form" />
+		</p:panel>
+
+		<p:panel header="Filtro de Produtos">
+			<h:panelGrid columns="3">
+				<p:outputLabel value="Produto"></p:outputLabel>
+				<p:inputText value="#{produtoBean.produtoFiltro.descricao}"></p:inputText>
+				<p:commandButton value="filtrar" action="#{produtoBean.filtrar()}"
+					update="@form"></p:commandButton>
+			</h:panelGrid>
+		</p:panel>
+
+		<p:panel header="Produtos">
+			<p:dataTable value="#{produtoBean.produtos}" var="prods"
+				emptyMessage="Nenhum Registro Encontrado">
+
+				<p:column headerText="Id" filterBy="#{prods.id}"
+					filterMatchMode="contains">
+					<h:outputText value="#{prods.id}" />
+				</p:column>
+
+				<p:column headerText="Descrição" filterBy="#{prods.descricao}"
+					filterMatchMode="contains">
+					<h:outputText value="#{prods.descricao}" />
+				</p:column>
+
+				<p:column headerText="Data de Cadastro">
+					<h:outputText value="#{prods.dataCadastro}">
+						<f:convertDateTime pattern="dd-MM-yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="tipo" filterBy="#{prods.tipo}">
+					<h:outputText value="#{prods.tipo.descricao}" />
+				</p:column>
+
+				<p:column headerText="valor">
+					<h:outputText value="#{prods.valor}" >
+						<f:convertNumber pattern="#,##0.00"/>
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="peso">
+					<h:outputText value="#{prods.peso}" >
+						<f:convertNumber pattern="#,##0.00"/>
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Data Validade">
+					<h:outputText value="#{prods.dataValidade}">
+						<f:convertDateTime pattern="dd-MM-yyyy" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column>
+					<p:commandButton icon="ui-icon-pencil" update="@form">
+						<f:setPropertyActionListener value="#{prods}"
+							target="#{produtoBean.produto}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-circle-close"
+						action="#{produtoBean.excluir(prods)}" update="@form" />
+				</p:column>
+
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+<h:outputScript library="js" name="calendar.js"></h:outputScript>
+</ui:define>
+</ui:decorate>

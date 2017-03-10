@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate template="template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+	<h:form id="formEstados">
+	
+		<p:growl id="msg" showDetail="true" sticky="true" life="50" />
+		<p:panel header="Produtos">
+			<p:dataTable value="#{estadoBean.estados}" var="est" emptyMessage="Nenhum Registro Encontrado"
+				selection="#{estadoBean.estadosSelecionados}" rowKey="#{est.id}">
+				<p:ajax event="rowSelect" listener="#{estadoBean.onRowSelect}"
+					update="formDialog" onsuccess="PF('insereEstado').show();" />
+					
+				<p:column selectionMode="multiple" style="width:16px;text-align:center" />
+				<p:column headerText="Id"> 
+					<h:outputText value="#{est.id}" />
+				</p:column>
+				<p:column headerText="Descrição">
+					<h:outputText value="#{est.descricao}" />
+				</p:column>
+				<p:column headerText="Sigla">
+					<h:outputText value="#{est.sigla}" />
+				</p:column>
+
+			</p:dataTable>
+			<p:commandButton value="Inserir Estado" type="button" onclick="PF('insereEstado').show();" />
+			<p:commandButton value="Excluir Estado" action="#{estadoBean.excluir}" update="@form"/>
+			
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Cadastro de Estado" widgetVar="insereEstado" modal="true" minHeight="40">
+		<h:form id="formDialog">
+	    	<p:panelGrid columns="2">
+	    		<p:outputLabel value="Descrição"></p:outputLabel>
+	    		<p:inputText value="#{estadoBean.estado.descricao}"></p:inputText>
+	    		
+	    		<p:outputLabel value="Sigla"></p:outputLabel>
+	    		<p:inputText value="#{estadoBean.estado.sigla}"></p:inputText>
+					
+				<p:commandButton action="#{estadoBean.salvar}" value="Cadastrar" update="formEstados formDialog" onsuccess="PF('insereEstado').hide()"></p:commandButton>
+	    	</p:panelGrid>
+    	</h:form>
+	</p:dialog>  
+	</ui:define>	
+	</ui:decorate>
+	

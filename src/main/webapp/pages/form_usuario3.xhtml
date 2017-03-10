@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate template="template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+	<h:form id="formUsuarios">
+		<p:growl id="msg" showDetail="false" sticky="true" life="50" />
+		
+		<p:panel header="Cadastro de Usuário">
+			<h:panelGrid columns="2">
+				<p:outputLabel for="txtNome" value="Nome" />
+				<p:inputText id="txtNome" value="#{usuarioBean.usuario.nome}"
+					placeholder="Nome do usuário" required="true" />
+				<p:outputLabel for="txtEmail" value="Email" />
+				<p:inputText id="txtEmail" value="#{usuarioBean.usuario.email}"
+					placeholder="E-mail" required="true" />
+				<p:outputLabel for="txtSenha" value="Senha" />
+				<p:password id="txtSenha" value="#{usuarioBean.usuario.senha}"
+					placeholder="Senha" required="true"
+					requiredMessage="Digite a senha do usuário" />
+				<p:outputLabel for="estado" value="Estado" />
+				<p:selectOneMenu id="estado" value="#{usuarioBean.estado}"
+					converter="#{estadoConverter}" required="true"
+					requiredMessage="Selecione o estado">
+					<p:ajax listener="#{usuarioBean.onEstadoChange}" event="change"
+						update="cidade"></p:ajax>
+					<f:selectItem itemLabel="Selecione" itemValue="#{null}" />
+					<f:selectItems value="#{estadoBean.estados}" var="est"
+						itemLabel="#{est.descricao} - #{est.sigla}" itemValue="#{est}">
+					</f:selectItems>
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Cidade:" for="cidade" />
+				<p:autoComplete id="cidade" forceSelection="true"
+					itemValue="#{usuarioBean.usuario.cidade}" var="cids"
+					itemLabel="#{cids.descricao}"
+					completeMethod="#{usuarioBean.completeText}"
+					converter="#{cidadeConverter}" />
+			</h:panelGrid>
+			<p:commandButton value="Salvar" icon="ui-icon-disk"
+				action="#{usuarioBean.salvar}" update="@form" />
+			<p:commandButton value="Incluir nova cidade" type="button"
+				onclick="PF('insereCidade').show()"></p:commandButton>
+		</p:panel>
+		<p:panel header="Lista de Usuários">
+			<p:dataTable value="#{usuarioBean.usuarios}" var="user"
+				emptyMessage="Nenhum registro encontrado">
+				<p:column headerText="Id" filterBy="#{user.id}"
+					filterMatchMode="contains">
+					<h:outputText value="#{user.id}" />
+				</p:column>
+				<p:column headerText="Nome" filterBy="#{user.nome}"
+					filterMatchMode="contains">
+					<h:outputText value="#{user.nome}" />
+				</p:column>
+				<p:column headerText="E-mail" filterBy="#{user.email}"
+					filterMatchMode="contains">
+					<h:outputText value="#{user.email}" />
+				</p:column>
+				<p:column headerText="Cidade">
+					<h:outputText
+						value="#{user.cidade.descricao} - #{user.cidade.estado.sigla}"></h:outputText>
+				</p:column>
+				<p:column>
+					<p:commandButton icon="ui-icon-pencil" update="@form"
+						action="#{usuarioBean.setUsuarioEstado(user)}" process="@this">
+
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-trash"
+						action="#{usuarioBean.excluir}" process="@this" update="@form">
+						<f:setPropertyActionListener value="#{user}"
+							target="#{usuarioBean.usuario}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+
+	<p:dialog header="Cadastro de Cidade" widgetVar="insereCidade"
+		modal="true" minHeight="40">
+		<h:form id="formDialog">
+			<p:panelGrid columns="2">
+				<p:outputLabel value="Descrição"></p:outputLabel>
+				<p:inputText value="#{cidadeBean.cidade.descricao}"></p:inputText>
+
+				<p:outputLabel value="Estado"></p:outputLabel>
+				<p:selectOneMenu value="#{cidadeBean.cidade.estado}"
+					converter="#{estadoConverter}">
+					<f:selectItems value="#{cidadeBean.estados}" var="est"
+						itemLabel="#{est.descricao} - #{est.sigla}" itemValue="#{est}" />
+				</p:selectOneMenu>
+				<p:commandButton value="Salvar" action="#{cidadeBean.salvar}"
+					update="formUsuarios formDialog"
+					onsuccess="PF('insereCidade').hide();"></p:commandButton>
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+	</ui:define>
+	</ui:decorate> 

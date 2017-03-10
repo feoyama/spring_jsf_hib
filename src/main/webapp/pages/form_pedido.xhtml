@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate template="template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+	<h:form id="formPedido">
+
+	<p:growl id="msg" showDetail="true" sticky="true" life="50"/>
+		<p:panel header="Pedidos Cadastrados" rendered="#{pedidoBean.pedidoVisivel}">
+		<p:dataTable value="#{pedidoBean.pedidos}" var="peds" selection="#{pedidoBean.pedidosSelecionados}" emptyMessage="Nenhum Registro Encontrado" rowKey="#{peds.id}">
+			<p:ajax event="rowSelect" listener="#{pedidoBean.onRowSelect}" update="formPedido"  />
+			<p:column selectionMode="multiple" style="width:16px;text-align:center" />
+			<p:column headerText="Id">
+				<p:outputLabel value="#{peds.id}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Data Pedido">
+				<p:outputLabel value="#{peds.dataPedido}">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</p:outputLabel>
+			</p:column>
+			<p:column headerText="Valor Total">
+				<p:outputLabel value="#{peds.valorTotal}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Usuário">
+				<p:outputLabel value="#{peds.usuario.nome}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Status">
+				<p:outputLabel value="#{peds.status.descricao}"></p:outputLabel>	
+			</p:column>
+		</p:dataTable>
+		<p:commandButton value="Inserir Pedido"  update="formPedido" action="#{pedidoBean.setItemParaVisivel}" />
+		<p:commandButton type="button" onclick="PF('excluirPedidos').show()" value="Excluir Itens"/>
+		<p:confirmDialog message="Tem certeza que deseja excluir os pedidos selecionados?"
+			header="Confirmação de exclusão" severity="alert" widgetVar="excluirPedidos">
+			<p:commandButton value="Sim"
+				actionListener="#{pedidoBean.excluirPedidosSelecionados}" update="formPedido"
+				oncomplete="PF('excluirPedidos').hide()" />
+			<p:commandButton value="Não" onclick="PF('excluirPedidos').hide();"
+				type="button" />
+		</p:confirmDialog>
+		</p:panel>
+		<p:panel rendered="#{pedidoBean.itemPedidoVisivel}">
+			<p:commandButton value="Voltar à tabela de pedidos" action="#{pedidoBean.setPedidoParaVisivel}" process="@this" update="formPedido" ></p:commandButton>
+		</p:panel>
+		<p:panel header="Pedido" rendered="#{pedidoBean.itemPedidoVisivel}">
+			
+			<p:panelGrid columns="2">
+			<p:outputLabel value="Usuário"></p:outputLabel> 
+			<p:selectOneMenu value="#{pedidoBean.pedido.usuario}" converter="#{usuarioConverter}" update="tabelaItens">
+				<p:ajax listener="#{pedidoBean.onUsuarioChange}" event="change" update="tabelaItens"></p:ajax>
+				<f:selectItem itemLabel="Selecione" itemValue="#{null}" />
+	        	<f:selectItems value="#{usuarioBean.usuarios}" var="usu" itemLabel="#{usu.nome}"></f:selectItems>
+	        </p:selectOneMenu>
+	        <p:outputLabel value="Status"></p:outputLabel>
+	        <p:selectOneMenu id="status_pedido" value="#{pedidoBean.pedido.statusPedido}">
+	         	<p:ajax listener="#{pedidoBean.onStatusChange}" event="change" converte="#{pedidoConverter}"></p:ajax>
+	         	<f:selectItem itemLabel="Selecione" itemValue="#{null}"/>
+	        	<f:selectItems value="#{pedidoBean.getListStatus()}" var="stat" itemLabel="#{stat.descricao}">	
+	        	</f:selectItems>
+	        </p:selectOneMenu>
+	        
+		</p:panelGrid>
+		</p:panel>
+		<p:panel header="Itens de pedidos" rendered="#{pedidoBean.itemPedidoVisivel}">
+			<p:dataTable value="#{pedidoBean.itensPedidos}" id="tabelaItens" var="ite" selection="#{pedidoBean.itensPedidosSelecionados}" emptyMessage="Nenhum Registro Encontrado" rowKey="#{ite.id}">
+			<p:ajax event="rowSelect" listener="#{pedidoBean.onRowSelectItensPedidos}" update="formPedido "  />
+			<p:column selectionMode="multiple" style="width:16px;text-align:center" />
+			<p:column headerText="Id">
+				<p:outputLabel value="#{ite.id}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Produto">
+				<p:outputLabel value="#{ite.produto.descricao}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Tipo">
+				<p:outputLabel value="#{ite.produto.tipo.descricao}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Peso">
+				<p:outputLabel value="#{ite.produto.peso}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Valor">
+				<p:outputLabel value="#{ite.produto.valor}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Quantidade">
+				<p:outputLabel value="#{ite.quantidade}"></p:outputLabel>
+			</p:column>
+	        <f:facet name="footer">
+		        Valor total: R$ #{pedidoBean.retornaValorTotal()}
+		    </f:facet>
+			</p:dataTable>
+			<p:commandButton value="Inserir Item" type="button" onclick="PF('insereItem').show();" />
+			<p:commandButton type="button" onclick="PF('excluir').show()" value="Excluir Itens"/>
+			<p:confirmDialog message="Tem certeza que deseja excluir os itens selecionados?"
+				header="Confirmação de exclusão" severity="alert" widgetVar="excluir">
+				<p:commandButton value="Sim"
+					actionListener="#{pedidoBean.excluirItensSelecionados}" update=" formPedido"
+					oncomplete="PF('excluir').hide()" />
+				<p:commandButton value="Não" onclick="PF('excluir').hide();"
+					type="button" />
+			</p:confirmDialog>
+		</p:panel>
+	</h:form>
+
+
+
+	<p:dialog header="Cadastro de Item" widgetVar="insereItem" modal="true" minHeight="40">
+		
+		<h:form id="formDialog">
+	    	<p:panelGrid columns="2">
+	    		<p:outputLabel value="Produto"></p:outputLabel>
+	    		<p:selectOneMenu id="produto" value="#{pedidoBean.produto}" converter="#{produtoConverter}">
+	    			<p:ajax listener="#{pedidoBean.onProdutoChange}" event="change" update="valorUnitario peso"></p:ajax>
+	    			<f:selectItem itemLabel="Selecione"/>
+		        	<f:selectItems value="#{pedidoBean.produtos}" var="pro" itemLabel="#{pro.descricao}">	
+		        	</f:selectItems>
+		        </p:selectOneMenu>
+		        <p:outputLabel value="Peso"></p:outputLabel>
+		        <p:outputLabel value="#{pedidoBean.produto.peso}" id="peso"></p:outputLabel>
+		        <p:outputLabel value="Valor unitário"></p:outputLabel>
+		        <p:outputLabel value="#{pedidoBean.produto.valor}" id="valorUnitario"></p:outputLabel>
+		        <p:outputLabel value="Quantidade"></p:outputLabel>
+		        <p:inputText value="#{pedidoBean.itemPedido.quantidade}">
+		        	<p:ajax listener="#{pedidoBean.onQuantidadeChange}" event="keyup" update="valorTotal"></p:ajax>
+		        </p:inputText>
+		        <p:outputLabel value="Valor total"></p:outputLabel>
+		        <p:outputLabel id="valorTotal" value="#{pedidoBean.valorTotal}"></p:outputLabel>
+				<p:commandButton action="#{pedidoBean.salvarItemPedido}" value="Cadastrar Item" update="formPedido  formDialog" onsuccess="PF('insereItem').hide()"></p:commandButton>
+				
+	    	</p:panelGrid>
+    	</h:form>
+	</p:dialog>  
+	</ui:define>
+	</ui:decorate>

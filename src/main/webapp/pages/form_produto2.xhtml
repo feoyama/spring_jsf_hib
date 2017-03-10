@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate template="template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+	<h:form id="formProdutos">
+		<p:growl id="msg" showDetail="true" sticky="true" life="50" />
+		<p:menubar>
+	        <p:menuitem value="Cidade" url="form_cidade.xhtml" />
+	        <p:menuitem value="Estado" url="form_estado.xhtml" />
+	        <p:menuitem value="Pedido" url="form_pedido.xhtml" />
+	        <p:menuitem value="Produto" url="form_produto2.xhtml" />
+	        <p:menuitem value="Usuário" url="form_usuario3.xhtml" />
+	    </p:menubar>
+		<p:panel header="Produtos">
+			<p:dataTable value="#{produtoBean.produtos}" var="prods"
+				emptyMessage="Nenhum Registro Encontrado" selection="#{produtoBean.produtosSelecionados}" rowKey="#{prods.id}">
+				
+				<p:ajax event="rowSelect" listener="#{produtoBean.onRowSelect}" update="formDialog" onsuccess="PF('insereProduto').show();" />
+				
+				<p:column selectionMode="multiple" style="width:16px;text-align:center" />
+				<p:column headerText="Id">
+					<h:outputText value="#{prods.id}" />
+				</p:column>
+				<p:column headerText="Descrição">
+					<h:outputText value="#{prods.descricao}" />
+				</p:column>
+
+				<p:column headerText="Data de Cadastro">
+					<h:outputText value="#{prods.dataCadastro}">
+						<f:convertDateTime pattern="dd-MM-yyyy" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="tipo">
+					<h:outputText value="#{prods.tipo.descricao}" />
+				</p:column>
+
+				<p:column headerText="valor">
+					<h:outputText value="#{prods.valor}">
+						<f:convertNumber pattern="#,##0.00" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="peso">
+					<h:outputText value="#{prods.peso}">
+						<f:convertNumber pattern="#,##0.00" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Data Validade">
+					<h:outputText value="#{prods.dataValidade}">
+						<f:convertDateTime pattern="dd-MM-yyyy" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+				
+			</p:dataTable>
+			<p:commandButton value="Inserir Produto" type="button" onclick="PF('insereProduto').show();" />
+			<p:commandButton value="Excluir Produto" action="#{produtoBean.excluir}" update="@form"/>
+		</p:panel>
+	</h:form>
+	<p:dialog header="Cadastro de Produto" widgetVar="insereProduto" modal="true" minHeight="40">
+		<h:form id="formDialog">
+	    	<p:panelGrid columns="2">
+	    		<p:outputLabel value="Descrição"></p:outputLabel>
+	    		<p:inputText value="#{produtoBean.produto.descricao}"></p:inputText>
+	    		
+	    		<p:outputLabel value="Tipo"></p:outputLabel>
+	    		<p:selectOneMenu id="tipo" value="#{produtoBean.produto.tipo}" style="width:83%">
+					<f:selectItems value="#{produtoBean.getListTipo()}" var="tip" itemLabel="#{tip.descricao}" />
+				</p:selectOneMenu>
+	    		
+	    		<p:outputLabel value="Valor"></p:outputLabel>
+				<p:inputText value="#{produtoBean.produto.valor}">
+					<p:keyFilter regEx="/[\d\-\.]/" />
+				</p:inputText>
+	    		
+	    		<p:outputLabel value="Peso"></p:outputLabel>
+				<p:inputText value="#{produtoBean.produto.peso}">
+					<p:keyFilter regEx="/[\d\-\.]/" />
+				</p:inputText>
+	    		
+	    		<p:outputLabel value="Data de Validade"></p:outputLabel>
+				<p:calendar value="#{produtoBean.produto.dataValidade}"
+					locale="pt_BR"></p:calendar>
+					
+				<p:commandButton action="#{produtoBean.salvar}" value="Cadastrar" update="formProdutos formDialog" onsuccess="PF('insereProduto').hide()"></p:commandButton>
+	    	</p:panelGrid>
+    	</h:form>
+	</p:dialog>  
+	<h:outputScript library="js" name="calendar.js"></h:outputScript> 
+	</ui:define>
+	</ui:decorate>

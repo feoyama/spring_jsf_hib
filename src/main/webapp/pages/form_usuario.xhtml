@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate template="template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+	<h:form id="formUsuarios">
+		<p:growl id="msg" showDetail="true" sticky="true" life="50"/>
+		
+		<p:panel header="Cadastro de Usuário">
+			<h:panelGrid columns="2">
+				<p:outputLabel for="txtNome" value="Nome" />
+				<p:inputText id="txtNome" value="#{usuarioBean.usuario.nome}" placeholder="Nome do usuário" />
+				<p:outputLabel for="txtEmail" value="Email" />
+				<p:inputText id="txtEmail" value="#{usuarioBean.usuario.email}" placeholder="E-mail" />
+				<p:outputLabel for="txtSenha" value="Senha" />
+				<p:password id="txtSenha" value="#{usuarioBean.usuario.senha}" placeholder="Senha" />
+				<p:outputLabel value="Cidade " />
+		        <p:selectOneMenu value="#{usuarioBean.usuario.cidade}" converter="#{cidadeConverter}">
+		            <f:selectItems value="#{usuarioBean.cidades}" var="cid" itemLabel="#{cid.descricao} - #{cid.estado.sigla}" itemValue="#{cid}"/>
+		        </p:selectOneMenu>
+			</h:panelGrid>
+			<p:commandButton value="Salvar" icon="ui-icon-disk" action="#{usuarioBean.salvar}" update="@form" />
+			<p:commandButton value="Incluir nova cidade" type="button" onclick="PF('insereCidade').show()"></p:commandButton>
+		</p:panel>
+		<p:panel header="Lista de Usuários">
+			<p:dataTable value="#{usuarioBean.usuarios}" var="user" emptyMessage="Nenhum registro encontrado" >
+				<p:column headerText="Id" filterBy="#{user.id}" filterMatchMode="contains">
+					<h:outputText value="#{user.id}" />
+				</p:column>
+				<p:column headerText="Nome" filterBy="#{user.nome}" filterMatchMode="contains">
+					<h:outputText value="#{user.nome}" />
+				</p:column>
+				<p:column headerText="E-mail" filterBy="#{user.email}" filterMatchMode="contains">
+					<h:outputText value="#{user.email}" />
+				</p:column>
+				<p:column headerText="Cidade">
+					<h:outputText value="#{user.cidade.descricao} - #{user.cidade.estado.sigla}"></h:outputText>
+				</p:column>
+				<p:column>
+					<p:commandButton icon="ui-icon-pencil" update="@form" >
+						<f:setPropertyActionListener value="#{user}" target="#{usuarioBean.usuario}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-trash" action="#{usuarioBean.excluir}" update="@form" >
+						<f:setPropertyActionListener value="#{user}" target="#{usuarioBean.usuario}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Cadastro de Cidade" widgetVar="insereCidade" modal="true" minHeight="40">
+		<h:form id="formDialog">
+			<p:panelGrid columns="2">
+				<p:outputLabel value="Descrição"></p:outputLabel>
+				<p:inputText value="#{cidadeBean.cidade.descricao}"></p:inputText>
+				
+				<p:outputLabel value="Estado"></p:outputLabel>
+				<p:selectOneMenu value="#{cidadeBean.cidade.estado}" converter="#{estadoConverter}">
+		           	<f:selectItems value="#{cidadeBean.estados}" var="est" itemLabel="#{est.descricao} - #{est.sigla}" itemValue="#{est}"/>	
+		        </p:selectOneMenu>
+		        <p:commandButton value="Salvar" action="#{cidadeBean.salvar}" update="formUsuarios formDialog" onsuccess="PF('insereCidade').hide();"></p:commandButton>
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+	</ui:define>
+	</ui:decorate>
