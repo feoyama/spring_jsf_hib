@@ -11,9 +11,13 @@
 
 	<p:growl id="msg" showDetail="true" sticky="true" life="50"/>
 		<p:panel header="Pedidos Cadastrados" rendered="#{pedidoBean.pedidoVisivel}">
-			<p:dataTable value="#{pedidoBean.pedidos}" var="peds" selection="#{pedidoBean.pedidosSelecionados}" emptyMessage="Nenhum Registro Encontrado" rowKey="#{peds.id}">
+			<p:dataTable value="#{pedidoBean.pedidos}" var="peds" selection="#{pedidoBean.pedidosSelecionados}" emptyMessage="Nenhum Registro Encontrado" rowKey="#{peds.id}" >
 				<p:ajax event="rowSelect" listener="#{pedidoBean.onRowSelect}" update="formPedido"  />
-				<p:column selectionMode="multiple" style="width:16px;text-align:center" />
+				<p:ajax event="rowSelectCheckbox" update="formPedido"></p:ajax>
+				<p:ajax event="rowUnselectCheckbox" update="formPedido"></p:ajax>
+				<p:column selectionMode="multiple" style="width:16px;text-align:center" >
+					
+				</p:column>
 				<p:column headerText="Id">
 					<p:outputLabel value="#{peds.id}"></p:outputLabel>
 				</p:column>
@@ -38,7 +42,7 @@
 				</p:column>
 			</p:dataTable>
 			<p:commandButton value="Inserir Pedido"  update="formPedido" action="#{pedidoBean.setItemParaVisivel}" />
-			<p:commandButton type="button" onclick="PF('excluirPedidos').show()" value="Excluir Itens"/>
+			<p:commandButton type="button" onclick="PF('excluirPedidos').show()" value="Excluir Itens" rendered="#{pedidoBean.temPedido()}" disabled="#{pedidoBean.naoTemPedidoSelecionado()}"/>
 			<p:confirmDialog message="Tem certeza que deseja excluir os pedidos selecionados?"
 				header="Confirmação de exclusão" severity="alert" widgetVar="excluirPedidos">
 				<p:commandButton value="Sim"
@@ -64,6 +68,8 @@
 		<p:panel header="Itens de pedidos" rendered="#{pedidoBean.itemPedidoVisivel}">
 			<p:dataTable value="#{pedidoBean.itensPedidos}" id="tabelaItens" var="ite" selection="#{pedidoBean.itensPedidosSelecionados}" emptyMessage="Nenhum Registro Encontrado" rowKey="#{ite.id}">
 			<p:ajax event="rowSelect" listener="#{pedidoBean.onRowSelectItensPedidos}" update="formPedido "  />
+			<p:ajax event="rowSelectCheckbox" update="formPedido"></p:ajax>
+			<p:ajax event="rowUnselectCheckbox" update="formPedido"></p:ajax>
 			<p:column selectionMode="multiple" style="width:16px;text-align:center" />
 			<p:column headerText="Id">
 				<p:outputLabel value="#{ite.id}"></p:outputLabel>
@@ -95,7 +101,7 @@
 		    </f:facet>
 			</p:dataTable>
 			<p:commandButton value="Inserir Item" type="button" onclick="PF('insereItem').show();" />
-			<p:commandButton type="button" onclick="PF('excluir').show()" value="Excluir Itens"/>
+			<p:commandButton type="button" onclick="PF('excluir').show()" value="Excluir Itens" rendered="#{pedidoBean.temItemPedido()}" disabled="#{pedidoBean.naoTemItemPedidoSelecionado()}"/>
 			<p:confirmDialog message="Tem certeza que deseja excluir os itens selecionados?"
 				header="Confirmação de exclusão" severity="alert" widgetVar="excluir">
 				<p:commandButton value="Sim"

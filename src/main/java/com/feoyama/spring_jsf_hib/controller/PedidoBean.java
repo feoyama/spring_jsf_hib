@@ -159,9 +159,8 @@ public class PedidoBean {
 		itemPedido = new ItemPedido();
 		produto = new Produto();
 		setItemParaVisivel();
-
 	}
-
+	
 	public void onRowSelectItensPedidos(SelectEvent event) {
 		itemPedido = (ItemPedido) event.getObject();
 	}
@@ -215,6 +214,33 @@ public class PedidoBean {
 				return true;
 		}
 		return false;
+	}
+	
+	public Boolean naoTemPedidoSelecionado(){
+		if (pedidosSelecionados == null)
+			return true;
+		else if (pedidosSelecionados.isEmpty()) 
+			return true;
+		else
+			return false;
+	}
+	
+	public Boolean naoTemItemPedidoSelecionado(){
+		if (itensPedidosSelecionados == null)
+			return true;
+		else if (itensPedidosSelecionados.isEmpty())
+			return true;
+		else
+			return false;
+					
+	}
+	
+	public Boolean temPedido(){
+		return !pedidos.isEmpty();
+	}
+	
+	public Boolean temItemPedido(){
+		return !itensPedidos.isEmpty();
 	}
 	
 	public Boolean isStatusOrcamento(Pedido pedido){
