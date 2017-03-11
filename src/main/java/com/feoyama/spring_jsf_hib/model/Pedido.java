@@ -93,6 +93,10 @@ public class Pedido implements Serializable{
 		return this.id == null;
 	}
 	
+	public Boolean isOrcamento() {
+		return this.statusPedido == null ? null : this.statusPedido == Status.ORCAMENTO;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

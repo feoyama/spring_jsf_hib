@@ -22,13 +22,18 @@
 				</p:outputLabel>
 			</p:column>
 			<p:column headerText="Valor Total">
-				<p:outputLabel value="#{peds.valorTotal}"></p:outputLabel>
+				<p:outputLabel value="#{peds.valorTotal}">
+					<f:convertNumber currencySymbol="R$" type="currency"/>
+				</p:outputLabel>
 			</p:column>
 			<p:column headerText="Usuário">
 				<p:outputLabel value="#{peds.usuario.nome}"></p:outputLabel>
 			</p:column>
 			<p:column headerText="Status">
 				<p:outputLabel value="#{peds.status.descricao}"></p:outputLabel>	
+			</p:column>
+			<p:column>
+				<p:commandButton value="Emitir Pedido" rendered="#{peds.isOrcamento()}" action="#{pedidoBean.emitirPedido(peds)}" update="formPedido"></p:commandButton>
 			</p:column>
 		</p:dataTable>
 		<p:commandButton value="Inserir Pedido"  update="formPedido" action="#{pedidoBean.setItemParaVisivel}" />
@@ -53,13 +58,6 @@
 				<p:ajax listener="#{pedidoBean.onUsuarioChange}" event="change" update="tabelaItens"></p:ajax>
 				<f:selectItem itemLabel="Selecione" itemValue="#{null}" />
 	        	<f:selectItems value="#{usuarioBean.usuarios}" var="usu" itemLabel="#{usu.nome}"></f:selectItems>
-	        </p:selectOneMenu>
-	        <p:outputLabel value="Status"></p:outputLabel>
-	        <p:selectOneMenu id="status_pedido" value="#{pedidoBean.pedido.statusPedido}">
-	         	<p:ajax listener="#{pedidoBean.onStatusChange}" event="change" converte="#{pedidoConverter}"></p:ajax>
-	         	<f:selectItem itemLabel="Selecione" itemValue="#{null}"/>
-	        	<f:selectItems value="#{pedidoBean.getListStatus()}" var="stat" itemLabel="#{stat.descricao}">	
-	        	</f:selectItems>
 	        </p:selectOneMenu>
 	        
 		</p:panelGrid>

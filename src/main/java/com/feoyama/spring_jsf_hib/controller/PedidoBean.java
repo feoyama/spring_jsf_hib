@@ -111,6 +111,7 @@ public class PedidoBean {
 			}
 			somatoria += produto.getValor() * itemPedido.getQuantidade();
 			pedido.setValorTotal(somatoria);
+			pedido.setStatus(Status.ORCAMENTO);
 			pedido = pedidoService.salvar(pedido);
 			itemPedido.setPedido(pedido);
 			itemPedido.setProduto(produto);
@@ -124,6 +125,19 @@ public class PedidoBean {
 		} catch (ServiceException e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro " + e.getMessage(), null));
+		}
+	}
+	
+	public void emitirPedido(Pedido pedido){
+		try {
+			pedido.setStatus(Status.EMITIDO);
+			pedidoService.salvar(pedido);
+			pedidos = pedidoService.list();
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Emitido com sucesso!"));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+			new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro " + e.getMessage(), null));
 		}
 	}
 	
@@ -194,6 +208,11 @@ public class PedidoBean {
 			e.printStackTrace();
 		}
 	}
+	
+	public Boolean isStatusOrcamento(Pedido pedido){
+		return pedido.getStatus() == Status.ORCAMENTO;
+	}
+	
 	
 	public void setPedidoParaVisivel(){
 		pedidoVisivel = true;
