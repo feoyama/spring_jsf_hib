@@ -6,61 +6,60 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<ui:define name="corpo">
+
 	<h:form id="formPedido">
 
 	<p:growl id="msg" showDetail="true" sticky="true" life="50"/>
 		<p:panel header="Pedidos Cadastrados" rendered="#{pedidoBean.pedidoVisivel}">
-		<p:dataTable value="#{pedidoBean.pedidos}" var="peds" selection="#{pedidoBean.pedidosSelecionados}" emptyMessage="Nenhum Registro Encontrado" rowKey="#{peds.id}">
-			<p:ajax event="rowSelect" listener="#{pedidoBean.onRowSelect}" update="formPedido"  />
-			<p:column selectionMode="multiple" style="width:16px;text-align:center" />
-			<p:column headerText="Id">
-				<p:outputLabel value="#{peds.id}"></p:outputLabel>
-			</p:column>
-			<p:column headerText="Data Pedido">
-				<p:outputLabel value="#{peds.dataPedido}">
-					<f:convertDateTime pattern="dd-MM-yyyy" />
-				</p:outputLabel>
-			</p:column>
-			<p:column headerText="Valor Total">
-				<p:outputLabel value="#{peds.valorTotal}">
-					<f:convertNumber currencySymbol="R$" type="currency"/>
-				</p:outputLabel>
-			</p:column>
-			<p:column headerText="Usuário">
-				<p:outputLabel value="#{peds.usuario.nome}"></p:outputLabel>
-			</p:column>
-			<p:column headerText="Status">
-				<p:outputLabel value="#{peds.status.descricao}"></p:outputLabel>	
-			</p:column>
-			<p:column>
-				<p:commandButton value="Emitir Pedido" rendered="#{peds.isOrcamento()}" action="#{pedidoBean.emitirPedido(peds)}" update="formPedido"></p:commandButton>
-			</p:column>
-		</p:dataTable>
-		<p:commandButton value="Inserir Pedido"  update="formPedido" action="#{pedidoBean.setItemParaVisivel}" />
-		<p:commandButton type="button" onclick="PF('excluirPedidos').show()" value="Excluir Itens"/>
-		<p:confirmDialog message="Tem certeza que deseja excluir os pedidos selecionados?"
-			header="Confirmação de exclusão" severity="alert" widgetVar="excluirPedidos">
-			<p:commandButton value="Sim"
-				actionListener="#{pedidoBean.excluirPedidosSelecionados}" update="formPedido"
-				oncomplete="PF('excluirPedidos').hide()" />
-			<p:commandButton value="Não" onclick="PF('excluirPedidos').hide();"
-				type="button" />
-		</p:confirmDialog>
+			<p:dataTable value="#{pedidoBean.pedidos}" var="peds" selection="#{pedidoBean.pedidosSelecionados}" emptyMessage="Nenhum Registro Encontrado" rowKey="#{peds.id}">
+				<p:ajax event="rowSelect" listener="#{pedidoBean.onRowSelect}" update="formPedido"  />
+				<p:column selectionMode="multiple" style="width:16px;text-align:center" />
+				<p:column headerText="Id">
+					<p:outputLabel value="#{peds.id}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Data Pedido">
+					<p:outputLabel value="#{peds.dataPedido}">
+						<f:convertDateTime pattern="dd-MM-yyyy" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Valor Total">
+					<p:outputLabel value="#{peds.valorTotal}">
+						<f:convertNumber currencySymbol="R$" type="currency"/>
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Usuário">
+					<p:outputLabel value="#{peds.usuario.nome}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Status">
+					<p:outputLabel value="#{peds.status.descricao}"></p:outputLabel>	
+				</p:column>
+				<p:column rendered="#{pedidoBean.temOrcamento()}">
+					<p:commandButton value="Emitir Pedido" rendered="#{peds.isOrcamento()}" action="#{pedidoBean.emitirPedido(peds)}" update="formPedido"></p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:commandButton value="Inserir Pedido"  update="formPedido" action="#{pedidoBean.setItemParaVisivel}" />
+			<p:commandButton type="button" onclick="PF('excluirPedidos').show()" value="Excluir Itens"/>
+			<p:confirmDialog message="Tem certeza que deseja excluir os pedidos selecionados?"
+				header="Confirmação de exclusão" severity="alert" widgetVar="excluirPedidos">
+				<p:commandButton value="Sim"
+					actionListener="#{pedidoBean.excluirPedidosSelecionados}" update="formPedido"
+					oncomplete="PF('excluirPedidos').hide()" />
+				<p:commandButton value="Não" onclick="PF('excluirPedidos').hide();"
+					type="button" />
+			</p:confirmDialog>
 		</p:panel>
 		<p:panel rendered="#{pedidoBean.itemPedidoVisivel}">
 			<p:commandButton value="Voltar à tabela de pedidos" action="#{pedidoBean.setPedidoParaVisivel}" process="@this" update="formPedido" ></p:commandButton>
 		</p:panel>
 		<p:panel header="Pedido" rendered="#{pedidoBean.itemPedidoVisivel}">
-			
-			<p:panelGrid columns="2">
-			<p:outputLabel value="Usuário"></p:outputLabel> 
-			<p:selectOneMenu value="#{pedidoBean.pedido.usuario}" converter="#{usuarioConverter}" update="tabelaItens">
-				<p:ajax listener="#{pedidoBean.onUsuarioChange}" event="change" update="tabelaItens"></p:ajax>
-				<f:selectItem itemLabel="Selecione" itemValue="#{null}" />
-	        	<f:selectItems value="#{usuarioBean.usuarios}" var="usu" itemLabel="#{usu.nome}"></f:selectItems>
-	        </p:selectOneMenu>
-	        
-		</p:panelGrid>
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Usuário"></p:outputLabel> 
+				<p:selectOneMenu value="#{pedidoBean.pedido.usuario}" converter="#{usuarioConverter}" update="tabelaItens" >
+					<p:ajax listener="#{pedidoBean.onUsuarioChange}" event="change" update="tabelaItens"></p:ajax>
+					<f:selectItem itemLabel="Selecione" itemValue="#{null}" />
+		        	<f:selectItems value="#{usuarioBean.usuarios}" var="usu" itemLabel="#{usu.nome}"></f:selectItems>
+		        </p:selectOneMenu>
+			</h:panelGrid>
 		</p:panel>
 		<p:panel header="Itens de pedidos" rendered="#{pedidoBean.itemPedidoVisivel}">
 			<p:dataTable value="#{pedidoBean.itensPedidos}" id="tabelaItens" var="ite" selection="#{pedidoBean.itensPedidosSelecionados}" emptyMessage="Nenhum Registro Encontrado" rowKey="#{ite.id}">
@@ -76,16 +75,23 @@
 				<p:outputLabel value="#{ite.produto.tipo.descricao}"></p:outputLabel>
 			</p:column>
 			<p:column headerText="Peso">
-				<p:outputLabel value="#{ite.produto.peso}"></p:outputLabel>
+				<p:outputLabel value="#{ite.produto.peso}">
+					<f:convertNumber minFractionDigits="3" />
+				</p:outputLabel> <p:outputLabel value=" Kg"></p:outputLabel>
 			</p:column>
 			<p:column headerText="Valor">
-				<p:outputLabel value="#{ite.produto.valor}"></p:outputLabel>
+				<p:outputLabel value="#{ite.produto.valor}">
+					<f:convertNumber minFractionDigits="2" currencySymbol="R$" type="currency"/>
+				</p:outputLabel>
 			</p:column>
 			<p:column headerText="Quantidade">
 				<p:outputLabel value="#{ite.quantidade}"></p:outputLabel>
 			</p:column>
 	        <f:facet name="footer">
-		        Valor total: R$ #{pedidoBean.retornaValorTotal()}
+	      	<p:outputLabel value="Valor total: "></p:outputLabel>
+		    <p:outputLabel value="#{pedidoBean.retornaValorTotal()}">
+		    	<f:convertNumber minFractionDigits="2" currencySymbol="R$" type="currency"/>
+		    </p:outputLabel>
 		    </f:facet>
 			</p:dataTable>
 			<p:commandButton value="Inserir Item" type="button" onclick="PF('insereItem').show();" />

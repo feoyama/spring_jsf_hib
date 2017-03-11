@@ -209,6 +209,14 @@ public class PedidoBean {
 		}
 	}
 	
+	public Boolean temOrcamento(){
+		for (Pedido pedido : pedidos) {
+			if(pedido.getStatus() == Status.ORCAMENTO)
+				return true;
+		}
+		return false;
+	}
+	
 	public Boolean isStatusOrcamento(Pedido pedido){
 		return pedido.getStatus() == Status.ORCAMENTO;
 	}
